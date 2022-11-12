@@ -226,6 +226,29 @@ const addNewRole = () => {
 
 };
 
+ //allows user to add a new department to db
+const addNewDepartment = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newDepartment',
+                message: 'Enter new department name...'
+            },
+        ])
+        .then((data) => {
+            connection.query('INSERT INTO department SET ?',
+                {
+                    name: data.newDepartment,
+                },
+                function (err) {
+                    if (err) throw err;
+                }
+            );
+            console.log('New department added to database')
+            viewAllDepartments();
+        });
+};
 
 connection.connect((err) => {
     if (err) throw err;
