@@ -80,7 +80,7 @@ const printMenuPrompts = () => {
                 deleteDepartment();
             }
             if (choices === 'Exit Menu') {
-                console.log('Logged out! Type npm start to login')
+                console.log('Logged out! Type npm start or node server.js to login')
                 connection.end();
             }
 
@@ -97,3 +97,22 @@ const viewAllEmployees = () => {
     })
     printMenuPrompts();
 }
+
+const viewAllRoles = () => {
+    const query = 'SELECT * FROM role';
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+    })
+    printMenuPrompts();
+}
+
+
+
+connection.connect((err) => {
+    if (err) throw err;
+
+
+    printMenuPrompts();
+
+});
