@@ -250,6 +250,61 @@ const addNewDepartment = () => {
         });
 };
 
+//allows you to update an employees current role to something new
+const updateEmployeeRole = () => {
+    connection.query('SELECT * FROM employee', (err, employees) => {
+        if (err) console.log(err);
+        employees = employees.map((employee) => {
+            return {
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id,
+            };
+        });
+        connection.query('SELECT * FROM role', (err, roles) => {
+            if (err) console.log(err);
+            roles = roles.map((role) => {
+                return {
+                    name: role.title,
+                    value: role.id,
+                }
+            });
+            inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'selectEmployee',
+                        message: 'Select employee to update...',
+                        choices: employees,
+                    },
+                    {
+                        type: 'list',
+                        name: 'selectNewRole',
+                        message: 'Select new employee role...',
+                        choices: roles,
+                    },
+                ])
+                .then((data) => {
+                    connection.query('UPDATE employee SET ? WHERE ?',
+                        [
+                            {
+                                role_id: data.selectNewRole,
+                            },
+                            {
+                                id: data.selectEmployee,
+                            },
+                        ],
+                        function (err) {
+                            if (err) throw err;
+                        }
+                    );
+                    console.log('Employee role updated');
+                    viewAllRoles();
+                });
+
+        });
+    });
+};
+
 connection.connect((err) => {
     if (err) throw err;
 
