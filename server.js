@@ -88,6 +88,7 @@ const printMenuPrompts = () => {
 
 };
 
+
 //SQL SELECT * FROM statements for choices
 const viewAllEmployees = () => {
     const query = 'SELECT * FROM employee';
@@ -114,7 +115,67 @@ const viewAllDepartments = () => {
         console.table(res);
     })
     printMenuPrompts();
+
+
+    
 }
+// allows user to add new employee to db
+const addNewEmployee = () => {
+    connection.query('SELECT * FROM role', (err, roles) => {
+        if (err) console.log(err);
+        roles = roles.map((role) => {
+            return {
+                name: role.title,
+                value: role.id,
+            };
+        });
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: 'Enter first name of new employee...'
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: 'Enter last name of new employee...'
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Enter new employee role...',
+                    choices: roles,
+                },
+                {
+                    type: 'list',
+                    name: 'managerId',
+                    message: 'select a manager id...',
+                    choices: [1, 3, 5, 6]
+                }
+            ])
+            .then((data) => {
+                console.log(data.role);
+                connection.query(
+                    'INSERT INTO employee SET ?',
+                    {
+                        first_name: data.firstName,
+                        last_name: data.lastName,
+                        role_id: data.role,
+                        manager_id: data.managerId
+                    },
+                    (err) => {
+                        if (err) throw err;
+                        console.log('Updated Employee Roster;');
+                        viewAllEmployees();
+
+                    }
+                );
+            });
+
+    });
+
+};
 
 
 
@@ -125,3 +186,5 @@ connection.connect((err) => {
     printMenuPrompts();
 
 });
+
+
