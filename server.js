@@ -117,7 +117,7 @@ const viewAllDepartments = () => {
     printMenuPrompts();
 
 
-    
+
 }
 // allows user to add new employee to db
 const addNewEmployee = () => {
@@ -177,6 +177,54 @@ const addNewEmployee = () => {
 
 };
 
+//allows user to add a new role to db
+const addNewRole = () => {
+    connection.query('SELECT * FROM department', (err, departments) => {
+        if (err) console.log(err);
+        departments = departments.map((department) => {
+            return {
+                name: department.name,
+                value: department.id,
+            };
+        });
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'newRole',
+                    message: 'Enter title of new role...'
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'Enter salary of new role...',
+                },
+                {
+                    type: 'list',
+                    name: 'departmentId',
+                    message: 'Enter department of new role...',
+                    choices: departments,
+                },
+            ])
+            .then((data) => {
+                connection.query(
+                    'INSERT INTO role SET ?',
+                    {
+                        title: data.newRole,
+                        salary: data.salary,
+                        department_id: data.departmentId,
+                    },
+                    function (err) {
+                        if (err) throw err;
+                    }
+                );
+                console.log('added new employee role!')
+                viewAllRoles();
+            });
+
+    });
+
+};
 
 
 connection.connect((err) => {
