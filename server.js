@@ -5,11 +5,14 @@ const inquirer = require('inquirer');
 // dotenv for environmental variables
 require('dotenv').config();
 // print MySQL rows to the console.
-require('console.table');
+const cTable = require('console.table');
+//terminal styling
+const chalk = require('chalk');
 
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
+
     user: 'root',
     password: process.env.DB_PASSWORD,
     database: 'employeeTracker_db'
@@ -19,7 +22,7 @@ const printMenuPrompts = () => {
         .prompt({
             name: 'choices',
             type: 'list',
-            message: 'PLEASE SELECT A MENU OPTION...',
+            message: chalk.green('SELECT A MENU OPTION...'),
             choices: [
                 'View All Employees',
                 'View All Roles',
@@ -29,12 +32,8 @@ const printMenuPrompts = () => {
                 'Add New Employee',
                 'Add New Role',
                 'Add New Department',
-                // chalk.red('Update Employee Managers'),
-                // chalk.red('Delete Employee'),
-                // chalk.red('Delete Role'),
-                // chalk.red('Delete Department'),
                 'Exit Menu',
-            ],
+                    ],
 
 
 
@@ -54,10 +53,12 @@ const printMenuPrompts = () => {
             if (choices === 'View Employees By Manager') {
                 viewEmployeesByManager();
             }
+            // if (choices === 'View Employees By Department') {
+            //     viewEmployeesByDepatment();
+            // }
             if (choices === 'Update Employee Role') {
                 updateEmployeeRole();
             }
-
             if (choices === 'Add New Employee') {
                 addNewEmployee();
             }
@@ -108,6 +109,7 @@ const viewAllRoles = () => {
     printMenuPrompts();
 }
 
+
 const viewAllDepartments = () => {
     const query = 'SELECT * FROM department';
     connection.query(query, (err, res) => {
@@ -115,10 +117,8 @@ const viewAllDepartments = () => {
         console.table(res);
     })
     printMenuPrompts();
-
-
-
 }
+
 // allows user to add new employee to db
 const addNewEmployee = () => {
     connection.query('SELECT * FROM role', (err, roles) => {
@@ -304,6 +304,19 @@ const updateEmployeeRole = () => {
         });
     });
 };
+
+//BONUS - View employees by manager (manager_id)
+const viewEmployeesByManager = () => {
+    const query = 'SELECT * FROM employee ORDER BY manager_id';
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+    })
+
+    printMenuPrompts();
+}
+
+
 
 connection.connect((err) => {
     if (err) throw err;
