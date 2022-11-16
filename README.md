@@ -13,7 +13,6 @@
   - [Installation](#installation)
   - [Usage](#usage)
   - [Features](#features)
-  - [Tests](#tests)
   - [Credits](#contributors&credit)
   - [Tech](#tech)
   - [Questions](#questions)
